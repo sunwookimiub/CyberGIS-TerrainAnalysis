@@ -93,7 +93,7 @@ def main():
 				E[i,j] = getE(i,j,p)
 				F[i,j] = getF(i,j,p)
 	#plot(G)
-    #plot(H)
+	#plot(H)
 	#plot(D)
 	#plot(E)
 	#plot(F)
