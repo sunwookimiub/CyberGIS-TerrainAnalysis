@@ -1,6 +1,9 @@
 import gdal
 from gdalconst import *
-import numpy
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib as ml
+import matplotlib.cm as cm
 
 filename = "output_be.tif"
 dataset = gdal.Open(filename, GA_ReadOnly)
@@ -69,13 +72,29 @@ def E(x,y,p):
 #F: Second derivative along diagonals
 def F(x,y,p):
 	return ( Z(x,y,3) + Z(x,y,7) - Z(x,y,1) - Z(x,y,9) ) / (4 * p*p)
+
+# plot function for better visualization
+def plot(data):
+    fig = plt.figure()
+    plt.imshow(data)
+    plt.colorbar(orientation='vertical')
+    plt.show()
+    
 	
 def main():
+        G = H = D = E = F = np.zeros((rows, cols))
 	p = pixelWidth
-	for i in range(cols):
-		for j in range(rows):
-			if (not isOutOfBounds(i,j,rows,cols)):
-				D(i,j,p) # Do stuff			
-				#Currently testing the validity of the functions
-
+        for i in range(data.shape[0]):
+                for j in range(data.shape[1]):
+                        if (not isOutOfBounds(i,j,rows,cols)):
+                                G[i,j] = G(i,j,p)
+                                H[i,j] = H(i,j,p)
+                                D[i,j] = D(i,j,p)
+                                E[i,j] = E(i,j,p)
+                                F[i,j] = F(i,j,p)
+        plot(G)
+        plot(H)
+        plot(D)
+        plot(E)
+        plot(F)
 main()
