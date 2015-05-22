@@ -22,7 +22,7 @@ data = band.ReadAsArray(0,0,cols,rows).astype(numpy.float)
 
 # Bounds for x: 0 to rows - 1
 # Bounds for y: 0 to cols - 1
-#hello
+
 #Helper Function for seeing if a point is valid:
 #Function: To find out if a neighboring point on the grid is valid
 #Parameters: x= x Coordinate, y= y Coordinate, n= the direction on the grid
