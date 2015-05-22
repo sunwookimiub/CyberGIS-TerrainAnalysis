@@ -24,7 +24,7 @@ data = band.ReadAsArray(0,0,cols,rows).astype(numpy.float)
 
 #-----------Terrain Gradients Evens-Young Method---------------
 
-def isOutOfBounds(x,y):
+def isOutOfBounds(x,y,rows,cols):
 	if( (x-1 < 0) or (x+1 > rows-1) or (y-1 < 0) or (y+1 > cols-1)):
 		return True
 	else:
@@ -52,13 +52,30 @@ def Z(x,y,n):
 
 #G: First Derivative in x direction
 def G(x,y,p):
-	if(not isOutOfBounds(x,y)):
 		return ( Z(x,y,3) + Z(x,y,6) + Z(x,y,9) - Z(x,y,1) - Z(x,y,4) - Z(x,y,7)) / (6 * p)
-	else:
-		return False
 
+#H: First Derivative in y direction
 def H(x,y,p):	
-	if(not isOutOfBounds(x,y)):
 		return ( Z(x,y,1) + Z(x,y,2) + Z(x,y,3) - Z(x,y,7) - Z(x,y,8) - Z(x,y,9)) / (6 * p)
-	else:
-		return False
+
+#D: Second Derivative in x direction
+def D(x,y,p):
+	return ( Z(x,y,1) + Z(x,y,3) + Z(x,y,4) - Z(x,y,6) - Z(x,y,7) - Z(x,y,9) - 2*(Z(x,y,2) + Z(x,y,5) + Z(x,y,8)) ) / (3 * p*p) 
+
+#E: Second Derivative in y direction
+def E(x,y,p):
+	return ( Z(x,y,1) + Z(x,y,2) + Z(x,y,3) - Z(x,y,7) - Z(x,y,8) - Z(x,y,9) - 2*(Z(x,y,4) + Z(x,y,5) + Z(x,y,6)) ) / (3 * p*p)
+
+#F: Second derivative along diagonals
+def F(x,y,p):
+	return ( Z(x,y,3) + Z(x,y,7) - Z(x,y,1) - Z(x,y,9) ) / (4 * p*p)
+	
+def main():
+	p = pixelWidth
+	for i in range(cols):
+		for j in range(rows):
+			if (not isOutOfBounds(i,j,rows,cols)):
+				D(i,j,p) # Do stuff			
+				#Currently testing the validity of the functions
+
+main()
