@@ -54,23 +54,23 @@ def Z(x,y,n):
 		return data[x+1,y+1]
 
 #G: First Derivative in x direction
-def G(x,y,p):
+def getG(x,y,p):
 		return ( Z(x,y,3) + Z(x,y,6) + Z(x,y,9) - Z(x,y,1) - Z(x,y,4) - Z(x,y,7)) / (6 * p)
 
 #H: First Derivative in y direction
-def H(x,y,p):	
+def getH(x,y,p):	
 		return ( Z(x,y,1) + Z(x,y,2) + Z(x,y,3) - Z(x,y,7) - Z(x,y,8) - Z(x,y,9)) / (6 * p)
 
 #D: Second Derivative in x direction
-def D(x,y,p):
+def getD(x,y,p):
 	return ( Z(x,y,1) + Z(x,y,3) + Z(x,y,4) - Z(x,y,6) - Z(x,y,7) - Z(x,y,9) - 2*(Z(x,y,2) + Z(x,y,5) + Z(x,y,8)) ) / (3 * p*p) 
 
 #E: Second Derivative in y direction
-def E(x,y,p):
+def getE(x,y,p):
 	return ( Z(x,y,1) + Z(x,y,2) + Z(x,y,3) - Z(x,y,7) - Z(x,y,8) - Z(x,y,9) - 2*(Z(x,y,4) + Z(x,y,5) + Z(x,y,6)) ) / (3 * p*p)
 
 #F: Second derivative along diagonals
-def F(x,y,p):
+def getF(x,y,p):
 	return ( Z(x,y,3) + Z(x,y,7) - Z(x,y,1) - Z(x,y,9) ) / (4 * p*p)
 
 # plot function for better visualization
@@ -87,14 +87,15 @@ def main():
    	for i in range(data.shape[0]):
 		for j in range(data.shape[1]):
 			if (not isOutOfBounds(i,j,rows,cols)):
-				G[i,j] = G(i,j,p)
-				H[i,j] = H(i,j,p)
-				D[i,j] = D(i,j,p)
-				E[i,j] = E(i,j,p)
-				F[i,j] = F(i,j,p)
-#        plot(G)
-#        plot(H)
-#        plot(D)
-#        plot(E)
-#        plot(F)
+				G[i,j] = getG(i,j,p)
+				H[i,j] = getH(i,j,p)
+				D[i,j] = getD(i,j,p)
+				E[i,j] = getE(i,j,p)
+				F[i,j] = getF(i,j,p)
+	#plot(G)
+    #plot(H)
+	#plot(D)
+	#plot(E)
+	#plot(F)
+
 main()
