@@ -92,6 +92,7 @@ def main():
 				D[i,j] = getD(i,j,p)
 				E[i,j] = getE(i,j,p)
 				F[i,j] = getF(i,j,p)
+	#Commented out the plots due to RuntimeError: Invalid DISPLAY variable on roger
 	#plot(G)
 	#plot(H)
 	#plot(D)
