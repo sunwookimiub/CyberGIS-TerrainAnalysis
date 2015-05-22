@@ -20,7 +20,7 @@ pixelWidth = geotransform[1]
 pixelHeight= geotransform[5]
 
 band = dataset.GetRasterBand(1)
-data = band.ReadAsArray(0,0,cols,rows).astype(numpy.float)
+data = band.ReadAsArray(0,0,cols,rows).astype(np.float)
 #rows = len(data) and cols = len(data[0])
 # Bounds for x: 0 to rows - 1
 # Bounds for y: 0 to cols - 1
@@ -82,19 +82,19 @@ def plot(data):
     
 	
 def main():
-        G = H = D = E = F = np.zeros((rows, cols))
+	G = H = D = E = F = np.zeros((rows, cols))
 	p = pixelWidth
-        for i in range(data.shape[0]):
-                for j in range(data.shape[1]):
-                        if (not isOutOfBounds(i,j,rows,cols)):
-                                G[i,j] = G(i,j,p)
-                                H[i,j] = H(i,j,p)
-                                D[i,j] = D(i,j,p)
-                                E[i,j] = E(i,j,p)
-                                F[i,j] = F(i,j,p)
-        plot(G)
-        plot(H)
-        plot(D)
-        plot(E)
-        plot(F)
+   	for i in range(data.shape[0]):
+		for j in range(data.shape[1]):
+			if (not isOutOfBounds(i,j,rows,cols)):
+				G[i,j] = G(i,j,p)
+				H[i,j] = H(i,j,p)
+				D[i,j] = D(i,j,p)
+				E[i,j] = E(i,j,p)
+				F[i,j] = F(i,j,p)
+#        plot(G)
+#        plot(H)
+#        plot(D)
+#        plot(E)
+#        plot(F)
 main()
