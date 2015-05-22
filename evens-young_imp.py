@@ -19,63 +19,46 @@ pixelHeight= geotransform[5]
 band = dataset.GetRasterBand(1)
 data = band.ReadAsArray(0,0,cols,rows).astype(numpy.float)
 #rows = len(data) and cols = len(data[0])
-
 # Bounds for x: 0 to rows - 1
 # Bounds for y: 0 to cols - 1
 
-#Helper Function for seeing if a point is valid:
-#Function: To find out if a neighboring point on the grid is valid
-#Parameters: x= x Coordinate, y= y Coordinate, n= the direction on the grid
-def check(x,y,n):
-	#Create boolean values checking the left,right,up,down validity of coordinates
-	hasLeft = (x-1) > 0
-	hasRight = (x+1) < (rows-1)
-	hasUp = (y-1) > 0
-	hasDown = (y+1) < (cols-1)
+#-----------Terrain Gradients Evens-Young Method---------------
 
-	#Check the bounds respective to the n value
-	if n == 1:
-		if (hasUp and hasLeft):
-			return True
-		else:
-			return False
-	elif n == 2:
-		if (hasUp):
-			return True
-		else:
-			return False
-	elif n == 3:
-		if (hasUp and hasRight):
-			return True
-		else:
-			return False
-	elif n == 4:
-		if (hasLeft):
-			return True
-		else:
-			return False
-	elif n == 5:
+def isOutOfBounds(x,y):
+	if( (x-1 < 0) or (x+1 > rows-1) or (y-1 < 0) or (y+1 > cols-1)):
 		return True
-	elif n == 6:
-		if (hasRight):
-			return True
-		else:
-			return False
-	elif n == 7:
-		if(hasDown and hasLeft):
-			return True
-		else:
-			return False
-	elif n == 8:
-		if(hasDown):
-			return True
-		else:
-			return False
-	elif n == 9:
-		if(hasDown and hasRight):
-			return True
-		else:
-			return False
 	else:
 		return False
 
+def Z(x,y,n):
+	if n == 1:
+		return data[x-1,y-1]
+	elif n == 2:
+		return data[x,y-1]
+	elif n == 3:
+		return data[x+1,y-1]
+	elif n == 4:
+		return data[x-1,y]
+	elif n == 5:
+		return data[x,y]
+	elif n == 6:
+		return data[x+1,y]
+	elif n == 7:
+		return data[x-1, y+1]
+	elif n == 8:
+		return data[x, y+1]
+	elif n == 9:
+		return data[x+1,y+1]
+
+#G: First Derivative in x direction
+def G(x,y,p):
+	if(not isOutOfBounds(x,y)):
+		return ( Z(x,y,3) + Z(x,y,6) + Z(x,y,9) - Z(x,y,1) - Z(x,y,4) - Z(x,y,7)) / (6 * p)
+	else:
+		return False
+
+def H(x,y,p):	
+	if(not isOutOfBounds(x,y)):
+		return ( Z(x,y,1) + Z(x,y,2) + Z(x,y,3) - Z(x,y,7) - Z(x,y,8) - Z(x,y,9)) / (6 * p)
+	else:
+		return False
