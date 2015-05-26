@@ -1,7 +1,7 @@
-import sys
 import os
-import textwrap
+import sys
 import argparse
+import textwrap
 import subprocess
 
 def parseArguments():
