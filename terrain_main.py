@@ -3,8 +3,6 @@ from gdalrw_util import *
 from mpi_run import *
 
 def main():
-	#parseArgs() cn
-	file = "output_be.tif"
 	dataset = gdalOpen(file, GA_ReadOnly)
 	pixel = dataset.GetGeoTransform()[1]
  	data = band_to_array(dataset, xi, yi, xf, yf)
