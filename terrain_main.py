@@ -1,9 +1,5 @@
-import gdal
-from gdalconst import *
-from mpi4py import MPI
-from mpi_run import *
 import sys
-import os
+from mpi_run import *
 
 def main():
 	file = sys.argv[1]

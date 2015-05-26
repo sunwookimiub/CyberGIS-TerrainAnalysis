@@ -35,9 +35,11 @@ def run_mpi(args):
 	
 	# construct system call
 	mpirun = os.environ.get('MPIRUN', 'mpirun')
-	sys_call = '{0} -np {1} python terrain_main.py {2}'.format(mpirun, np, p)
+	sys_call = '{0} -np {1} python terrain_main.py {2} {3}'.format(mpirun, np, args.filename, p)
 	subprocess.call([sys_call], shell = True)
 
 if __name__ == ("__main__"):
 	args = parseArguments()
 	run_mpi(args)
+
+#Fix the border values
