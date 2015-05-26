@@ -1,8 +1,8 @@
+import gdal
+import time
+import numpy as np
 from mpi_util import *
 from mpi4py import MPI
-import numpy as np
-import time
-import gdal
 from gdalconst import *
 
 def run_mpi_jobs (file, p):
