@@ -2,7 +2,7 @@ from terrain_util import *
 from gdalrw_util import *
 from mpi_run import *
 
-if __name__ == ("__main__") :
+def main():
 	#parseArgs() cn
 	file = "output_be.tif"
 	dataset = gdalOpen(file, GA_ReadOnly)
@@ -10,3 +10,7 @@ if __name__ == ("__main__") :
  	data = band_to_array(dataset, xi, yi, xf, yf)
 	run_mpi_jobs(data)
 #	newdata = run_mpi_jobs(data)
+	
+
+if __name__ == ("__main__") :
+	main()
