@@ -1,11 +1,10 @@
-from evansyoung_methods import *
-import argparse
+from terrain_util import *
+from gdalrw_util import *
+from mpi_run import *
 
-def main():
-	parser = argparse.ArgumentParser(description='Process from geoTIFF')
-	parser.add_argument('filename', metavar='T', type=str, nargs='+', help='a geoTIFF file for analysis')
-	args = parser.parse_args()
-	print args.accumulate(args.integers)
-	
 if __name__ == ("__main__") :
-	main()
+	#parseArgs() cn
+	file = "output_be.tif"
+ 	data = band_to_array(file)
+	run_mpi_jobs(data)
+#	newdata = run_mpi_jobs(data)
