@@ -1,4 +1,16 @@
+import gdal
+from gdalconst import *
 import numpy as np
+
+# Input: geoTIFF file and parameters for the block
+# Output: block of nparray
+def band_to_array(dataset, xi, yi, xf, yf):
+#	dataset = gdal.Open(filename, GA_ReadOnly)
+#	geotransform = dataset.GetGeoTransform()
+#	pixel = geotransform[1] # this is width. check if height is different...
+	band = dataset.GetRasterBand(1)
+	data = band.ReadAsArray(xi,yi,xf,yf).astype(np.float)
+	return data
 
 #G: First Derivative in x direction
 def getG(bar, p):

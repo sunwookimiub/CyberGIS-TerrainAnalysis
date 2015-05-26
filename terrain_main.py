@@ -5,6 +5,8 @@ from mpi_run import *
 if __name__ == ("__main__") :
 	#parseArgs() cn
 	file = "output_be.tif"
- 	data = band_to_array(file)
+	dataset = gdalOpen(file, GA_ReadOnly)
+	pixel = dataset.GetGeoTransform()[1]
+ 	data = band_to_array(dataset, xi, yi, xf, yf)
 	run_mpi_jobs(data)
 #	newdata = run_mpi_jobs(data)
