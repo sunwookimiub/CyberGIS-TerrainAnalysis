@@ -73,7 +73,6 @@ def run_mpi_jobs (file, p):
 		output_dataset = driver.Create(output_file, cols, y_size, 1, gdal.GDT_Float32)
 		output_dataset.SetGeoTransform(geotransform)
 		output_dataset.GetRasterBand(1).WriteArray(data)
-                output_dataset.GetRasterBand(1).SetNoDataValue(0.0)
                 output_dataset = None
 		dataset = None
                 
