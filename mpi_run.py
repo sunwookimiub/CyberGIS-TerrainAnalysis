@@ -5,10 +5,6 @@ from mpi_util import *
 from mpi4py import MPI
 from gdalconst import *
 
-import matplotlib.pyplot as plt
-import matplotlib as ml
-import matplotlib.cm as cm
-
 # this function assign roughly equally devided data to each process,
 # then each process do the computation independently.
 def run_mpi_jobs (file, p):
@@ -64,7 +60,7 @@ def run_mpi_jobs (file, p):
         # rank 0 gathers all processed data
 	data = comm.gather(G, root=0)
 	
-	if rank == 0:
+ 	if rank == 0:
                 # output processed data
 		data = np.concatenate(data, axis=1)
                 # set boundary data to NULL
