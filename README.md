@@ -10,7 +10,7 @@ To receive an image file as input from the user and to return a file of the equi
 
 2) Run through a script for qsub, **terrainanalysis.pbs**:
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*(Note: No default values are provided for filename, np, or p)*
+*(Note: No default values are provided for filename, np, or p)*
 > qsub terrainanalysis.pbs -v filename=*filename*,np=x,p=y
 
 #### For further information:
