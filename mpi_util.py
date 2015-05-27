@@ -4,7 +4,7 @@ import numpy as np
 
 def process_bands(band, p, x_offset, x_size, y_size, G):	
 	proc_data = band.ReadAsArray(x_offset,0,x_size,y_size)
-	for i in xrange(1,y_size-2):
+	for i in xrange(1,y_size-1):
 		for j in xrange(1,x_size-2):
 			bar = get_block(i,j,proc_data)
 			G[i,j] = getG(bar, p)

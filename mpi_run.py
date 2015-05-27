@@ -5,7 +5,12 @@ from mpi_util import *
 from mpi4py import MPI
 from gdalconst import *
 
-# this function assign roughly equally devided data to each process, then each process do the computation independently.
+import matplotlib.pyplot as plt
+import matplotlib as ml
+import matplotlib.cm as cm
+
+# this function assign roughly equally devided data to each process,
+# then each process do the computation independently.
 def run_mpi_jobs (file, p):
 	comm = MPI.COMM_WORLD
 	rank = comm.Get_rank()
@@ -62,8 +67,13 @@ def run_mpi_jobs (file, p):
 	if rank == 0:
                 # output processed data
 		data = np.concatenate(data, axis=1)
+                # set boundary data to NULL
+                data[[0,-1]] = None
+                data[:, [0,-1]] = None
 		output_dataset = driver.Create(output_file, cols, y_size, 1, gdal.GDT_Float32)
 		output_dataset.SetGeoTransform(geotransform)
 		output_dataset.GetRasterBand(1).WriteArray(data)
-		output_dataset = None
+                output_dataset.GetRasterBand(1).SetNoDataValue(0.0)
+                output_dataset = None
 		dataset = None
+                
