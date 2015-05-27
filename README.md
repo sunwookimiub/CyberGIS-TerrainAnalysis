@@ -5,7 +5,7 @@ To receive an image file as input from the user and to return a file of the equi
 ###### Running the program:
 1) Run through a python file *terrainanalysis.py*:
 
-  a) Only specify the filename. The default value for the number of processes will be set to 40 and pixel size to 1
+    a) Only specify the filename. The default value for the number of processes will be set to 40 and pixel size to 1
   > python terrainanalysis.py *filename*
 
 or
