@@ -5,7 +5,7 @@ To receive an image file as input from the user and to return a file of the equi
 ###### Running the program:
 1) Run through a python file *terrainanalysis.py*:
 
-  If number of processes or pixel size is not specified, the default values will be set to 40 and 1 respectively. 
+  &nbspIf number of processes or pixel size is not specified, the default values will be set to 40 and 1 respectively. 
   > python terrainanalysis.py *filename* [-np x] [-p z]
 
 2) Run through a script for qsub, *terrainanalysis.pbs*:
