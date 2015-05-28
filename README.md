@@ -6,8 +6,7 @@ To receive an image file as input from the user and to return a file of the equi
 
 Run through a script for qsub, **script.sh**:
 
-*(Note: No default values are provided for filename, np, or p)*
-> qsub terrainanalysis.pbs -v inImg=*a*,outImg=*b*,p=*c* -l nodes=*x*:ppn=*y*
+> qsub script.sh -v inImg=*a*,outImg=*b*,p=*c* -l nodes=*x*:ppn=*y*
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *a* = the name of input image
 
