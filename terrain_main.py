@@ -1,5 +1,6 @@
 import sys
-from mpi_run import *
+from worker_run import *
+import time
 
 def main():
 	file = sys.argv[1]
