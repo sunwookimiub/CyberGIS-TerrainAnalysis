@@ -6,7 +6,7 @@ To receive an image file as input from the user and to return a file of the equi
 
 Run through a script for qsub, **script.sh**:
 
-&nbsp;&nbsp;&nbsp;&nbsp;qsub script.sh -v inImg=*A*,outImg=*B*,p=*C* -l nodes=*X*:ppn=*Y*
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;qsub script.sh -v inImg=*A*,outImg=*B*,p=*C* -l nodes=*X*:ppn=*Y*
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *A* = the name of input image
 
