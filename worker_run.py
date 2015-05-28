@@ -6,13 +6,12 @@ from mpi4py import MPI
 from gdalconst import *
 
 # this function assign roughly equally devided data to each process, then each process do the computation independently.
-def run_mpi_jobs (file, p, output):
+def run_mpi_jobs (file, p, output_file):
 	comm = MPI.COMM_WORLD
 	rank = comm.Get_rank()
 	size = comm.Get_size()
 
         # output is in geo tiff format
-	output_file = "myoutput.tif"
 	driver = gdal.GetDriverByName("GTiff")	
 	dataset = gdal.Open(file, GA_ReadOnly)
 	band = dataset.GetRasterBand(1)
