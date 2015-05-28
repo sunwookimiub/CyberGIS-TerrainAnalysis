@@ -5,15 +5,22 @@ from worker_util import *
 from mpi4py import MPI
 from gdalconst import *
 
-# this function assign roughly equally devided data to each process, then each process do the computation independently.
+# write output to file
+def write_to_file(data, x_size, y_size):
+	output_file = "myoutput.tif"
+	driver = gdal.GetDriverByName("GTiff")	
+        output_dataset = driver.Create(output_file, x_size, y_size, 1, gdal.GDT_Float32)
+        output_dataset.GetRasterBand(1).WriteArray(data, 1, 1)
+        output_dataset = None
+
+# this function assign roughly equally devided data to each process
+# then each process do the computation independently.
 def run_mpi_jobs (file, p, output):
 	comm = MPI.COMM_WORLD
 	rank = comm.Get_rank()
 	size = comm.Get_size()
 
         # output is in geo tiff format
-	output_file = "myoutput.tif"
-	driver = gdal.GetDriverByName("GTiff")	
 	dataset = gdal.Open(file, GA_ReadOnly)
 	band = dataset.GetRasterBand(1)
 	geotransform = dataset.GetGeoTransform()
@@ -31,39 +38,31 @@ def run_mpi_jobs (file, p, output):
                 # in order to process boundaries get one more column of data from left neighbor 
 		x_offset = rank*proc_cols-1
 		proc_cols = cols - proc_cols * (size-1)
-		G = np.zeros((y_size, proc_cols))
 		x_size = proc_cols + 1
-
-		process_bands(band, p, x_offset, x_size, y_size, G)
+                G = process_bands(band, p, x_offset, x_size, y_size)
 
         # process with lowest rank get the first chunk of data
 	elif rank == 0:
                 # in order to process boundaries, get one more column of data from right neighbor 
-		G = np.zeros((y_size, proc_cols))
 		x_offset = 0
-		x_size = proc_cols + 1
-		
-		process_bands(band, p, x_offset, x_size, y_size, G)
-        
-
+		x_size = proc_cols + 1		
+		G = process_bands(band, p, x_offset, x_size, y_size)
 	else:
                 # get two more columns of data from neighbors to process boundaries
-		G = np.zeros((y_size, proc_cols))
 		x_offset = rank*proc_cols-1
-		x_size = proc_cols+2
-		
-		process_bands(band, p, x_offset, x_size, y_size, G)
+		x_size = proc_cols+2		
+		G = process_bands(band, p, x_offset, x_size, y_size)
                 
         # wait for all processes finish processing
 	comm.Barrier()
+        # close input dataset
+        dataset = None
         # rank 0 gathers all processed data
 	data = comm.gather(G, root=0)
-	
 	if rank == 0:
                 # output processed data
 		data = np.concatenate(data, axis=1)
-		output_dataset = driver.Create(output_file, cols, y_size, 1, gdal.GDT_Float32)
-		output_dataset.SetGeoTransform(geotransform)
-		output_dataset.GetRasterBand(1).WriteArray(data)
-		output_dataset = None
-		dataset = None
+                write_to_file(data, cols, y_size)
+
+	
+        
