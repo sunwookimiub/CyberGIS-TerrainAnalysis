@@ -13,7 +13,7 @@ To receive an image file as input from the user and to return a file of the equi
 *(Note: No default values are provided for filename, np, or p)*
 > qsub terrainanalysis.pbs -v inImg=*a*,outImg=*b*,p=*c* -l nodes=*x*:ppn=*y*
 
-&nbsp;&nbsp;&nbsp;where *a* = the name of input image
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *a* = the name of input image
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *b* = the name of output image
 
