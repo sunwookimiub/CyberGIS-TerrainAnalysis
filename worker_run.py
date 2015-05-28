@@ -6,10 +6,9 @@ from mpi4py import MPI
 from gdalconst import *
 
 # write output to file
-def write_to_file(data, x_size, y_size):
-	output_file = "myoutput.tif"
+def write_to_file(data, x_size, y_size, output_file_name):
 	driver = gdal.GetDriverByName("GTiff")	
-        output_dataset = driver.Create(output_file, x_size, y_size, 1, gdal.GDT_Float32)
+        output_dataset = driver.Create(output_file_name, x_size, y_size, 1, gdal.GDT_Float32)
         output_dataset.GetRasterBand(1).WriteArray(data, 1, 1)
         output_dataset = None
 
@@ -62,7 +61,6 @@ def run_mpi_jobs (file, p, output):
 	if rank == 0:
                 # output processed data
 		data = np.concatenate(data, axis=1)
-                write_to_file(data, cols, y_size)
-
+                write_to_file(data, cols, y_size, output)
 	
         
