@@ -1,6 +1,5 @@
 import sys
 from worker_run import *
-import time
 
 def main():
 	file = sys.argv[1]
