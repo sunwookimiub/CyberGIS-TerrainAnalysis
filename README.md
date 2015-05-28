@@ -23,7 +23,7 @@ To receive an image file as input from the user and to return a file of the equi
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *y* = number of ppn to be assigned
 
-*(Note: number of nodes is the CPU Qty and number of ppn is Total Cores as listedinhttps://wiki.ncsa.illinois.edu/display/ROGER/ROGER+Technical+Summary) *
+*(Note: number of nodes is the CPU Qty and number of ppn is Total Cores as listed in the [Roger Technical Summary page of the NCSA Wiki](https://wiki.ncsa.illinois.edu/display/ROGER/ROGER+Technical+Summary)*
 
 #### For further information:
 [Go to the CIGI Wiki](https://wiki.cigi.illinois.edu/display/UP/Parallel+Terrain+Analysis+on+DEMs)
