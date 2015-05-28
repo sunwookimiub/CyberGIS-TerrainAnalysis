@@ -5,7 +5,6 @@ from worker_util import *
 from mpi4py import MPI
 from gdalconst import *
 
-
 # write output to file
 def write_to_file(data, x_size, y_size, output_file_name):
 	driver = gdal.GetDriverByName("GTiff")	
@@ -13,7 +12,6 @@ def write_to_file(data, x_size, y_size, output_file_name):
         for i in range(data.shape[0]):
                 output_dataset.GetRasterBand(i+1).WriteArray(data[i],1,1)
         output_dataset = None
-                
 
 # this function assign roughly equally devided data to each process
 # then each process do the computation independently.
@@ -41,27 +39,26 @@ def run_mpi_jobs (file, p, output):
 		x_offset = rank*proc_cols-1
 		proc_cols = cols - proc_cols * (size-1)
 		x_size = proc_cols + 1
-                G = process_bands(band, p, x_offset, x_size, y_size)
-                print G.shape
+                output_data = process_bands(band, p, x_offset, x_size, y_size)
 
         # process with lowest rank get the first chunk of data
 	elif rank == 0:
                 # in order to process boundaries, get one more column of data from right neighbor 
 		x_offset = 0
 		x_size = proc_cols + 1		
-		G = process_bands(band, p, x_offset, x_size, y_size)
+		output_data = process_bands(band, p, x_offset, x_size, y_size)
 	else:
                 # get two more columns of data from neighbors to process boundaries
 		x_offset = rank*proc_cols-1
 		x_size = proc_cols+2		
-		G = process_bands(band, p, x_offset, x_size, y_size)
+		output_data = process_bands(band, p, x_offset, x_size, y_size)
                 
         # wait for all processes finish processing
 	comm.Barrier()
         # close input dataset
         dataset = None
         # rank 0 gathers all processed data
-	data = comm.gather(G, root=0)
+	data = comm.gather(output_data, root=0)
 	if rank == 0:
                 # output processed data
 		data = np.concatenate(data, axis=2)
