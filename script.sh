@@ -5,4 +5,4 @@
 cd $PBS_O_WORKDIR
 chmod +x terrain_main.py
 module load anaconda
-mpirun -np $PBS_NP python terrain_main.py $inImg $outimg $p
+mpirun -np $PBS_NP python terrain_main.py $inImg $outImg $p
