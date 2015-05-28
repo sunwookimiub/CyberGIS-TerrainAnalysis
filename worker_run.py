@@ -8,7 +8,7 @@ from gdalconst import *
 # write output to file
 def write_to_file(data, x_size, y_size, output_file_name, input_driver_name):
 	driver = gdal.GetDriverByName(input_driver_name)	
-        output_dataset = driver.Create(output_file_name, x_size, y_size, 5, gdal.GDT_Float32)
+        output_dataset = driver.Create(output_file_name, x_size, y_size, 10, gdal.GDT_Float32)
         for i in range(data.shape[0]):
                 output_dataset.GetRasterBand(i+1).WriteArray(data[i],1,1)
         output_dataset = None
