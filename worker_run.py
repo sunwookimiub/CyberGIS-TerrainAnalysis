@@ -5,12 +5,15 @@ from worker_util import *
 from mpi4py import MPI
 from gdalconst import *
 
+
 # write output to file
 def write_to_file(data, x_size, y_size, output_file_name):
 	driver = gdal.GetDriverByName("GTiff")	
-        output_dataset = driver.Create(output_file_name, x_size, y_size, 1, gdal.GDT_Float32)
-        output_dataset.GetRasterBand(1).WriteArray(data, 1, 1)
+        output_dataset = driver.Create(output_file_name, x_size, y_size, 5, gdal.GDT_Float32)
+        for i in range(data.shape[0]):
+                output_dataset.GetRasterBand(i+1).WriteArray(data[i],1,1)
         output_dataset = None
+                
 
 # this function assign roughly equally devided data to each process
 # then each process do the computation independently.
@@ -39,6 +42,7 @@ def run_mpi_jobs (file, p, output):
 		proc_cols = cols - proc_cols * (size-1)
 		x_size = proc_cols + 1
                 G = process_bands(band, p, x_offset, x_size, y_size)
+                print G.shape
 
         # process with lowest rank get the first chunk of data
 	elif rank == 0:
@@ -60,7 +64,7 @@ def run_mpi_jobs (file, p, output):
 	data = comm.gather(G, root=0)
 	if rank == 0:
                 # output processed data
-		data = np.concatenate(data, axis=1)
+		data = np.concatenate(data, axis=2)
                 write_to_file(data, cols, y_size, output)
 	
         

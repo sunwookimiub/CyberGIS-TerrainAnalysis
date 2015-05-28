@@ -4,7 +4,15 @@ import numpy as np
 
 def process_bands(band, p, x_offset, x_size, y_size):	
 	proc_data = band.ReadAsArray(x_offset,0,x_size,y_size)
-        return getG(proc_data, p)
+        output_data = np.zeros((5, y_size-2, x_size-2))
+        output_data[0] = getG(proc_data, p)
+        output_data[1] = getH(proc_data, p)
+        output_data[2] = getD(proc_data, p)
+        output_data[3] = getE(proc_data, p)
+        output_data[4] = getF(proc_data, p)
+        return output_data
+
+                
 
 #G: First Derivative in x direction
 def getG(data, p):
