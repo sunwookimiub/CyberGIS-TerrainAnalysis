@@ -6,17 +6,17 @@ To receive an image file as input from the user and to return a file of the equi
 
 Run through a script for qsub, **script.sh**:
 
-> qsub script.sh -v inImg=*a*,outImg=*b*,p=*c* -l nodes=*x*:ppn=*y*
+> qsub script.sh -v inImg=*A*,outImg=*B*,p=*C* -l nodes=*X*:ppn=*Y*
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *a* = the name of input image
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *A* = the name of input image
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *b* = the name of output image
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *B* = the name of output image
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *c* = value of the pixel size
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *C* = value of the pixel size
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *x* = number of nodes to be assigned
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *X* = number of nodes to be assigned
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *y* = number of ppn to be assigned
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *Y* = number of ppn to be assigned
 
 *(Note: number of nodes is the CPU Qty and number of ppn is Total Cores as listed in the [Roger Technical Summary page of the NCSA Wiki](https://wiki.ncsa.illinois.edu/display/ROGER/ROGER+Technical+Summary))*
 
