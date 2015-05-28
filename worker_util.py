@@ -4,7 +4,7 @@ import numpy as np
 
 def process_bands(band, p, x_offset, x_size, y_size):	
 	proc_data = band.ReadAsArray(x_offset,0,x_size,y_size)
-        return getG(data, p)
+        return getG(proc_data, p)
 
 #G: First Derivative in x direction
 def getG(data, p):
