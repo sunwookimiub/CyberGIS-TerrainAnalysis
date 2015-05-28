@@ -6,8 +6,8 @@ from mpi4py import MPI
 from gdalconst import *
 
 # write output to file
-def write_to_file(data, x_size, y_size, output_file_name):
-	driver = gdal.GetDriverByName("GTiff")	
+def write_to_file(data, x_size, y_size, output_file_name, input_driver_name):
+	driver = gdal.GetDriverByName(input_driver_name)	
         output_dataset = driver.Create(output_file_name, x_size, y_size, 5, gdal.GDT_Float32)
         for i in range(data.shape[0]):
                 output_dataset.GetRasterBand(i+1).WriteArray(data[i],1,1)
@@ -22,6 +22,7 @@ def run_mpi_jobs (file, p, output):
 
         # output is in geo tiff format
 	dataset = gdal.Open(file, GA_ReadOnly)
+        input_driver_name = dataset.GetDriver().ShortName
 	band = dataset.GetRasterBand(1)
 	geotransform = dataset.GetGeoTransform()
         # if using default pixel size, get pixel size from data 
@@ -62,6 +63,6 @@ def run_mpi_jobs (file, p, output):
 	if rank == 0:
                 # output processed data
 		data = np.concatenate(data, axis=2)
-                write_to_file(data, cols, y_size, output)
+                write_to_file(data, cols, y_size, output, input_driver_name)
 	
         
