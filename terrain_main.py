@@ -1,9 +1,5 @@
 import sys
 from worker_run import *
-<<<<<<< Updated upstream
-=======
-import time
->>>>>>> Stashed changes
 
 def main():
 	file = sys.argv[1]
