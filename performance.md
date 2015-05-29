@@ -1,4 +1,4 @@
-Data Size  : 48.6 MB.
+Data Size  : 78 MB.
 
 
 Number Of Process | Process Time | Read Time |  Write Time | real | user | sys 
@@ -9,8 +9,3 @@ Number Of Process | Process Time | Read Time |  Write Time | real | user | sys
 16| 0.93s | 0.15s | 21.75s | 29.286s | 3m47.122s | 3m27.157s
 32| 0.6s | 0.16s | 31.11s | 47.050s | 9m52.244s | 10m24.401s
 
-As the number of process increase, overhead for creating processes gets larger and unnegligible. 
-
-For a small data set, the overhead is enormous compares to computing time.
-
-Also as the number of process increase, the fluctuation of running times also incease, running times become very unstable.
