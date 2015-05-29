@@ -5,9 +5,9 @@ import numpy as np
 def process_bands(band, p, x_offset, x_size, y_size):	
 	proc_data = band.ReadAsArray(x_offset,0,x_size,y_size)
 	output_data = np.zeros((10, y_size-2, x_size-2))
-    output_data[0] = G =getG(proc_data, p)
+	output_data[0] = G = getG(proc_data, p)
 	output_data[1] = H = getH(proc_data, p)
-    output_data[2] = D = getD(proc_data, p)
+	output_data[2] = D = getD(proc_data, p)
 	output_data[3] = E = getE(proc_data, p)
 	output_data[4] = F = getF(proc_data, p)
 
