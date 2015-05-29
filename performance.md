@@ -1,19 +1,13 @@
 Data Size  : 48.6 MB.
 
-Read Time  : 0.10304 s.
 
-Write Time : 0.090349 s.
-
-Number Of Process | Process Time | I\O time | real | user | sys 
---- | --- | ---  | --- | --- | ---
-2 | 28.231s | 0.18s | 28.231s | 54.646s | 1.785s
-4 | 16.520s | 0.15s | 16.620s | 1m0.840s | 1.610s
-8 | 9.55s | 0.31s | 10.872s | 1m14.210s | 7.263s
-8 | 13.63s | 0.18s | 40.097s | 1m54.739s | 17.218s
-16| 5.11s | 0.19s | 8.962s | 1m26.850s | 17.305s 
-32| 4.12s | 0.15s | 19.494s | 2m37.931s | 1m43.250s
-32| 4.9s | 0.22s | 1m15.412s | 2m48.011s | 5m29.441s
-64 | 3.49s | 0.21s | 1m29.167s | 3m51.992s | 9m59.128s
+Number Of Process | Process Time | Read Time |  Write Time | real | user | sys 
+--- | --- | ---  | --- | --- | --- | ---
+2 | 4.5s | 0.16s | 23.51s | 32.343s | 36.796s | 27.727s
+4 | 2.51s | 0.14s | 22.5s | 29.833s | 1m7.684s | 51.371s
+8 | 1.45s | 0.13s | 23.45s | 29.483s | 2m5.724s | 1m46.477s
+16| 0.93s | 0.15s | 21.75s | 29.286s | 3m47.122s | 3m27.157s
+32| 0.6s | 0.16s | 31.11s | 47.050s | 9m52.244s | 10m24.401s
 
 As the number of process increase, overhead for creating processes gets larger and unnegligible. 
 
