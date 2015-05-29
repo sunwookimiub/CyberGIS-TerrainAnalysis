@@ -1,8 +1,9 @@
-mport gdal
+import gdal
 from gdalconst import *
 import numpy as np
 
 def process_bands(band, p, x_offset, x_size, y_size):
+    np.seterr(divide='ignore', invalid='ignore')
     proc_data = band.ReadAsArray(x_offset,0,x_size,y_size)
     output_data = np.zeros((10, y_size-2, x_size-2))
     output_data[0] = G =getG(proc_data, p)
