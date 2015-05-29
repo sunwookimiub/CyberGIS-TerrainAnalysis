@@ -1,0 +1,8 @@
+# no .tif file
+*.tif
+# no .pyc file
+*.pyc
+# no vim backup file
+*.bak
+# no emacs backup file
+*~
