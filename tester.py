@@ -4,160 +4,155 @@ from gdalconst import *
 import matplotlib.pyplot as plt
 import matplotlib as ml
 import matplotlib.cm as cm
-from mpi4py import MPI
 import time
-import osr
 
-
-#Global Variables ---------------------------
-file = "pitremoved.tif"
-dataset = gdal.Open(file, GA_ReadOnly)
+dataset = gdal.Open("pitremoved.tif", GA_ReadOnly)
 band = dataset.GetRasterBand(1)
 geotransform = dataset.GetGeoTransform()
-p = geotransform[1]
+originX = geotransform[0]
+originY = geotransform[3]
+pixelWidth = geotransform[1]
+pixelHeight = geotransform[5]
+input_driver_name = dataset.GetDriver().ShortName
 cols = dataset.RasterXSize
 rows = dataset.RasterYSize
-data = band.ReadAsArray(0,0,cols,rows)
-G=H=D=E=F=np.zeros((rows,cols))
-output_data = np.zeros((9,rows,cols))
-np.seterr(divide='ignore', invalid='ignore')
-#---------------------------------------------
+p = pixelWidth
+data = band.ReadAsArray(0,0, cols, rows)
+output_file_name = "single.tif"
 
-def read_and_plot(file_name):
-        dataset_check = gdal.Open(file_name, GA_ReadOnly)
-        band_check = dataset_check.GetRasterBand(1)    
-        cols_check = dataset_check.RasterXSize
-        rows_check = dataset_check.RasterYSize
-        data_check = band_check.ReadAsArray(0,0, cols_check, rows_check)
-        fig = plt.figure()
-        plt.imshow(data_check)
-        plt.colorbar(orientation='vertical')
-        plt.show()
+def write_to_file(data, x_size, y_size, output_file_name, input_driver_name):
+	tic = time.clock()
+	driver = gdal.GetDriverByName(input_driver_name)	
+	output_dataset = driver.Create(output_file_name, x_size, y_size, 5, gdal.GDT_Float32)
+	for i in range(5):
+		output_dataset.GetRasterBand(i+1).WriteArray(data[i])
+	output_dataset = None
 
-def isOutOfBounds(x,y,rows,cols):
-	if( (x-1 < 0) or (x+1 > rows-1) or (y-1 < 0) or (y+1 > cols-1)):
-		return True
-	else:
-		return False
+def check_diff():
+	sin_dataset = gdal.Open("single.tif", GA_ReadOnly)
+	mpi_dataset = gdal.Open("mpiResult3.tif", GA_ReadOnly)
 
-def Z(x,y,n):
-	if n == 1:
-		return data[x-1,y-1]
-	elif n == 2:
-		return data[x,y-1]
-	elif n == 3:
-		return data[x+1,y-1]
-	elif n == 4:
-		return data[x-1,y]
-	elif n == 5:
-		return data[x,y]
-	elif n == 6:
-		return data[x+1,y]
-	elif n == 7:
-		return data[x-1, y+1]
-	elif n == 8:
-		return data[x, y+1]
-	elif n == 9:
-		return data[x+1,y+1]
+	for i in range(5):
+		sin_band = sin_dataset.GetRasterBand(i+1)
+		sin_cols = sin_dataset.RasterXSize
+		sin_rows = sin_dataset.RasterYSize
+		sin_data = sin_band.ReadAsArray(0,0, sin_cols, sin_rows)
+		
+		mpi_band = mpi_dataset.GetRasterBand(i+1)
+		mpi_cols = mpi_dataset.RasterXSize
+		mpi_rows = mpi_dataset.RasterYSize
+		mpi_data = sin_band.ReadAsArray(0,0, mpi_cols, mpi_rows)
 
-#G: First Derivative in x direction
-def getG(x,y,p):
-		return ( Z(x,y,3) + Z(x,y,6) + Z(x,y,9) - Z(x,y,1) - Z(x,y,4) - Z(x,y,7)) / (6 * p)
+		error = 0
+		for i in range(1, mpi_rows - 1):
+			for j in range(1, mpi_cols - 1):
+				if (sin_data[i][j] != mpi_data[i][j]):
+					print 'at ',i,j
+					print sin_data[i][j], mpi_data[i][j]
+					error = error + 1
+		print error
+#		print np.sum(sin_data.reshape(1,-1) - mpi_data.reshape(1,-1))
 
-#H: First Derivative in y direction
-def getH(x,y,p):	
-		return ( Z(x,y,1) + Z(x,y,2) + Z(x,y,3) - Z(x,y,7) - Z(x,y,8) - Z(x,y,9)) / (6 * p)
+def isOutOfBound(x,y):
+    if x !=0 and x != rows - 1 and y != 0 and y != cols - 1:
+        return False
+    else:
+        return True
+    
+def getG(x,y):
+    if(isOutOfBound(x,y)):
+        return 0
+    else:
+        z3 = data[x+1, y-1]
+        z6 = data[x+1, y]
+        z9 = data[x+1, y+1]
+        z1 = data[x-1, y-1]
+        z4 = data[x-1, y]
+        z7 = data[x-1, y+1]
+        return (z3 + z6 + z9 - z1 - z4 - z7)/(6*p)
+    
+def getH(x,y):
+    if (isOutOfBound(x,y)):
+        return 0
+    else:
+        z3 = data[x+1, y-1]
+        z6 = data[x+1, y]
+        z9 = data[x+1, y+1]
+        z1 = data[x-1, y-1]
+        z4 = data[x-1, y]
+        z7 = data[x-1, y+1]
+        z2 = data[x, y-1]
+        z8 = data[x, y+1]
+        return(z1 + z2 + z3 - z7 - z8 -z9)/(6*p)
+def getD(x,y):
+    if(isOutOfBound(x,y)):
+        return 0
+    else:
+        z3 = data[x+1, y-1]
+        z6 = data[x+1, y]
+        z9 = data[x+1, y+1]
+        z1 = data[x-1, y-1]
+        z4 = data[x-1, y]
+        z7 = data[x-1, y+1]
+        z2 = data[x, y-1]
+        z5 = data[x,y]
+        z8 = data[x, y+1]
+        return (z1 + z3 + z4 - z6 - z7 - z9 - 2*(z2 + z5 + z8))/float(3*p**2)
 
-#D: Second Derivative in x direction
-def getD(x,y,p):
-	return ( Z(x,y,1) + Z(x,y,3) + Z(x,y,4) - Z(x,y,6) - Z(x,y,7) - Z(x,y,9) - 2*(Z(x,y,2) + Z(x,y,5) + Z(x,y,8)) ) / (3 * p*p) 
+def getE(x,y):
+    if(isOutOfBound(x,y)):
+        return 0
+    else:
+        z3 = data[x+1, y-1]
+        z6 = data[x+1, y]
+        z9 = data[x+1, y+1]
+        z1 = data[x-1, y-1]
+        z4 = data[x-1, y]
+        z7 = data[x-1, y+1]
+        z2 = data[x, y-1]
+        z5 = data[x,y]
+        z8 = data[x, y+1]
+        return (z1 + z3 + z4 - z6 - z7 - z9 -2 * (z4 + z5 + z6))/float(3*p**2)
+def getF(x,y):
+    if (isOutOfBound(x,y)):
+        return 0
+    else:
+        z3 = data[x+1, y-1]
+        z6 = data[x+1, y]
+        z9 = data[x+1, y+1]
+        z1 = data[x-1, y-1]
+        z4 = data[x-1, y]
+        z7 = data[x-1, y+1]
+        z2 = data[x, y-1]
+        z5 = data[x,y]
+        z8 = data[x, y+1]
+        return (z3 + z7 -z1 -z9)/(4*p**2)
 
-#E: Second Derivative in y direction
-def getE(x,y,p):
-	return ( Z(x,y,1) + Z(x,y,2) + Z(x,y,3) - Z(x,y,7) - Z(x,y,8) - Z(x,y,9) - 2*(Z(x,y,4) + Z(x,y,5) + Z(x,y,6)) ) / (3 * p*p)
+def plot(data):
+    fig = plt.figure()
+    plt.imshow(data)
+    plt.colorbar(orientation='vertical')
+    plt.show()
 
-#F: Second derivative along diagonals
-def getF(x,y,p):
-	return ( Z(x,y,3) + Z(x,y,7) - Z(x,y,1) - Z(x,y,9) ) / (4 * p*p)
 
-def getTif():
-	#print "cols=",cols
-	#print "rows=",rows
-	#print "data.shape[0]",data.shape[0]
-	#print "data.shape[1]",data.shape[1]
-	#print "G.shape[0]",G.shape[0]
-	#print "G.shape[1]",G.shape[1]
-	#print "output_data[0].shape[0]",output_data[0].shape[0]
-	#print "output_data[0].shape[1]",output_data[0].shape[1]	
+def main():
+	G = H = D = E = F = np.zeros((rows, cols))
+	allFive = np.zeros((5,rows,cols))
 	for i in range(data.shape[0]):
 		for j in range(data.shape[1]):
-			if (not isOutOfBounds(i,j,rows,cols)):
-				G[i,j] = getG(i,j,p)
-				H[i,j] = getH(i,j,p)
-				D[i,j] = getD(i,j,p)
-				E[i,j] = getE(i,j,p)
-				F[i,j] = getF(i,j,p)
-	output_data[0] = G
-	output_data[1] = H
-	output_data[2] = D
-	output_data[3] = E
-	output_data[4] = F
+			G[i,j] = getG(i,j)
+			H[i,j] = getH(i,j)
+			D[i,j] = getD(i,j)
+			E[i,j] = getE(i,j)	
+			F[i,j] = getF(i,j)
 
-	GHF = np.multiply(F, np.multiply(G, H) )
-	G2H2 = np.power(G, 2) + np.power(H, 2)
-	output_data[5] = np.sqrt(G2H2)
-	output_data[6] = np.arctan(H/G)
-	output_data[7] = - ( ( np.multiply(np.power(H,2),D) \
-	- 2 * GHF + np.multiply(np.power(G, 2), E) ) \
-	/ np.power(G2H2, 1.5) )
-	output_data[8] = - ( (np.multiply(np.power(G, 2), D) + 2 * GHF \
-	+ np.multiply(np.power(H,2), E) ) \
-	/ (np.multiply(G2H2, np.power(1+G2H2,1.5) ) ) )
-	output_data[9] = - ( (np.multiply(1 + np.power(H,2), D) - 2 * GHF \
-	+ np.multiply(np.power(G,2), E) ) \
-	/ (2 * np.power(1 + G2H2, 1.5) ) )
-	input_driver_name = dataset.GetDriver().ShortName
-	driver = gdal.GetDriverByName(input_driver_name)
-	outputDS=driver.Create("singleResult.tif",cols,rows,5,gdal.GDT_Float32)
-		
-	for i in range(output_data.shape[0]):
-		outputDS.GetRasterBand(i+1).WriteArray(data[i],1,1)
-	outputDS = None
-
-def checkdiff(sinv, mpiv):
-	sinds = gdal.Open(sinv, GA_ReadOnly)
-	sinband=sinds.GetRasterBand(1)
-	sincols = sinds.RasterXSize
-	sinrows = sinds.RasterYSize
-	sindata = sinband.ReadAsArray(0,0,cols,rows)
+	allFive[0] = G
+	allFive[1] = H
+	allFive[2] = D
+	allFive[3] = E
+	allFive[4] = F
 	
-	mpids = gdal.Open(sinv, GA_ReadOnly)
-	mpiband=mpids.GetRasterBand(1)
-	mpicols = mpids.RasterXSize
-	mpirows = mpids.RasterYSize
-	mpidata = mpiband.ReadAsArray(0,0,cols,rows)
+	write_to_file(allFive, cols, rows, output_file_name, input_driver_name)
 
-	#print np.sum(mpidata.reshape(1,-1) - sindata.reshape(1,-1))
-
-#Global Variables ---------------------------
-file = "pitremoved.tif"
-dataset = gdal.Open(file, GA_ReadOnly)
-band = dataset.GetRasterBand(1)
-geotransform = dataset.GetGeoTransform()
-p = geotransform[1]
-cols = dataset.RasterXSize
-rows = dataset.RasterYSize
-data = band.ReadAsArray(0,0,cols,rows)
-G=H=D=E=F=np.zeros((rows,cols))
-output_data = np.zeros((9,rows,cols))
-np.seterr(divide='ignore', invalid='ignore')
-#---------------------------------------------
-
-def read_and_plot(file_name):
-        dataset_check = gdal.Open(file_name, GA_ReadOnly)
-        band_check = dataset_check.GetRasterBand(1)    
-        cols_check = dataset_check.RasterXSize
-        rows_check = dataset_check.RasterYSize
-        data_check = band_check.ReadAsArray(0,0, cols_check, rows_check)
-if __name__ == "__main__":
-	checkdiff("singleResult.tif","mpiResult.tif")
+#main()
+check_diff()
