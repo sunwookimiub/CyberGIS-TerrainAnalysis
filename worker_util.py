@@ -85,6 +85,7 @@ def check_bounds(x,y,data):
 		return True
 
 def get_block(data):
+	#Need to be replaced with views
 	block_array = np.zeros((9, data.shape[0]-2, data.shape[1]-2))
 	block_array[0] = data[ :-2,  :-2]
 	block_array[1] = data[ :-2, 1:-1]
