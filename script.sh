@@ -13,11 +13,9 @@ if [ -n "$inImg" ]; then
     if ! [ -e $inImg ]; then
         echo "$inImg file does not exist."
     fi
-
     if [ -n "$outImg" ]; then 
         outImg_=$outImg
     fi
-
     if [ -n "$p" ]; then 
         p_=$p
     fi
