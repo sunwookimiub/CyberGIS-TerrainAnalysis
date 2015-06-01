@@ -3,6 +3,20 @@ from gdalconst import *
 import numpy as np
 
 def process_bands(band, p, x_offset, x_size, y_size):
+    """Read and analysis elevation data.
+    
+    Keywork arguments:
+    band     -- input data band
+    p        -- pixel size
+    x_offset -- starting point in x axis for partitioned data chunk
+    x_size   -- number of column in partitioned data chunk
+    y_size   -- number of row in partitioned data chunk
+    Return:
+    A 3 dimensional numpy array in following format:
+    [G, H, D, E, F, SLOPE, ASPECT, PLANC, PROFC, MEANC]
+    Exception:
+    Ignoring divide by zero warning and set their value to NaN
+    """
     np.seterr(divide='ignore', invalid='ignore')
     proc_data = band.ReadAsArray(x_offset,0,x_size,y_size)
     output_data = np.zeros((10, y_size-2, x_size-2))
@@ -11,77 +25,76 @@ def process_bands(band, p, x_offset, x_size, y_size):
     output_data[2] = D = getD(proc_data, p)
     output_data[3] = E = getE(proc_data, p)
     output_data[4] = F = getF(proc_data, p)
-
     GHF = np.multiply(F, np.multiply(G, H) )
-
     G2H2 = np.power(G, 2) + np.power(H, 2)
-
     output_data[5] = np.sqrt(G2H2)
-
     output_data[6] = np.arctan(H/G)
-
     output_data[7] = - ( ( np.multiply(np.power(H,2),D)  \
                                 - 2 * GHF + np.multiply(np.power(G, 2), E) ) \
                                 / np.power(G2H2, 1.5) )
-
     output_data[8] = - ( (np.multiply(np.power(G, 2), D) + 2 * GHF \
                               + np.multiply(np.power(H,2), E) ) \
                              / (np.multiply(G2H2, np.power(1+G2H2,1.5) ) ) )
 
     return output_data
 
-
-
-
-
-#G: First Derivative in x direction
 def getG(data, p):
+    """Return G, first derivative in x direction."""
     bar  = get_block(data)
     return( (bar[2]+bar[5]+bar[8] \
             - bar[0]-bar[3]-bar[6]) \
             /(6*p) )
 
-#H: First Derivative in y direction
 def getH(data, p):
+    """Return H, first derivative in y direction."""
     bar = get_block(data)
     return( (bar[0]+bar[1]+bar[2] \
             - bar[6]-bar[7]-bar[8] ) \
             /(6*p) )
 
-#D: Second Derivative in x direction
 def getD(data, p):
+    """Return D, second derivative in x direction."""
     bar = get_block(data)
     return( (bar[0]+bar[2]+bar[3] \
             - bar[5]-bar[6]-bar[8] \
             - 2*(bar[1]+bar[4]+bar[7]) ) \
             /(3*p*p) )
-#E: Second Derivative in x direction
+
 def getE(data, p):
+    """Return E, second derivative in x direction."""
     bar = get_block(data)
     return( (bar[0]+bar[1]+bar[2] \
             - bar[6]-bar[7]-bar[8] \
             - 2*(bar[4]+bar[5]+bar[6]) ) \
             /(3*p*p) )
 
-#F: Second derivative along diagonals
 def getF(data, p):
+    """Return F, second derivative along diagonals.""" 
     bar = get_block(data)
     return( (bar[2-off]+bar[6-off] \
             - bar[0-off]-bar[8-off] ) \
             /(4*p*p) )
 
 def get_block(data):
-    block_list = []
-    block_list.append(data[ :-2,  :-2])
-    block_list.append(data[ :-2, 1:-1])
-    block_list.append(data[ :-2, 2:  ])
-    block_list.append(data[1:-1,  :-2])
-    block_list.append(data[1:-1, 1:-1])
-    block_list.append(data[1:-1, 2:  ])
-    block_list.append(data[2:  ,  :-2])
-    block_list.append(data[2:  , 1:-1])
-    block_list.append(data[2:  , 2:  ])
-    return block_list
+    """return array with different slices to ease access to nearest neighbors
+
+       Returns a 9 element array to make it easier to access nearest
+       neighbors using slices without making copies of the data. The
+       array element is organized in the following pattern:
+          0 1 2
+          3 4 5
+          6 7 8
+
+       The slices are smaller than the original data array because the
+       boundary cells are excluded. This allows vector operations to work
+       correctly.
+    """
+    return [
+        data[ :-2,  :-2], data[ :-2, 1:-1], data[ :-2, 2:  ],
+        data[1:-1,  :-2], data[1:-1, 1:-1], data[1:-1, 2:  ],
+        data[2:  ,  :-2], data[2:  , 1:-1], data[2:  , 2:  ],
+    ]
+    
 
 
 
