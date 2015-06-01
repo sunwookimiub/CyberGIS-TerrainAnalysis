@@ -5,7 +5,6 @@ from worker_util import *
 from mpi4py import MPI
 from gdalconst import *
 
-# write output to file
 def write_to_file(data, x_size, y_size, output_file_name, input_driver_name):
 	"""Write analysed data to output file
 	
@@ -22,8 +21,7 @@ def write_to_file(data, x_size, y_size, output_file_name, input_driver_name):
                 output_dataset.GetRasterBand(i+1).WriteArray(data[i],1,1)
         output_dataset = None
 
-# this function assign roughly equally devided data to each process
-# then each process do the computation independently.
+
 def run_mpi_jobs (file, p, output):
 	""" Assign roughly equally divided data chunk to each process
 	
