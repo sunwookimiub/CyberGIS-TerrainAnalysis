@@ -43,30 +43,30 @@ def run_mpi_jobs (file, p, output):
 	if p == 0:
 		p = geotransform[1] 
 	cols = dataset.RasterXSize
-        # number of columns for each process
-	proc_cols = cols/size
-        # each process is assigned with same number of columns as original data
-	y_size = dataset.RasterYSize
+	rows = dataset.RasterYSize
+        # roughly assign equal number of rows to each process
+	proc_rows = rows/size
+	# each process is assigned with same number of columns as original data
+	x_size = dataset.RasterXSize
 	
         # the process with highest rank get the last chunk of data 
 	if rank == size-1 :
-                # in order to process boundaries get one more column of data from left neighbor 
-		x_offset = rank*proc_cols-1
-		proc_cols = cols - proc_cols * (size-1)
-		x_size = proc_cols + 1
-                output_data = process_bands(band, p, x_offset, x_size, y_size)
+                # in order to process boundaries get one more row of data from left neighbor 
+		y_offset = rank*proc_rows-1
+		y_size = rows - proc_rows * (size-1) + 1
+		output_data = process_bands(band, p, y_offset, x_size, y_size)
 
         # process with lowest rank get the first chunk of data
 	elif rank == 0:
-                # in order to process boundaries, get one more column of data from right neighbor 
-		x_offset = 0
-		x_size = proc_cols + 1		
-		output_data = process_bands(band, p, x_offset, x_size, y_size)
+                # in order to process boundaries, get one more row of data from right neighbor 
+		y_offset = 0
+		y_size = proc_rows + 1		
+		output_data = process_bands(band, p, y_offset, x_size, y_size)
 	else:
-                # get two more columns of data from neighbors to process boundaries
-		x_offset = rank*proc_cols-1
-		x_size = proc_cols+2		
-		output_data = process_bands(band, p, x_offset, x_size, y_size)
+                # get two more rows of data from neighbors to process boundaries
+		y_offset = rank*proc_rows-1
+		y_size = proc_rows+2		
+		output_data = process_bands(band, p, y_offset, x_size, y_size)
                 
         # wait for all processes finish processing
 	comm.Barrier()
