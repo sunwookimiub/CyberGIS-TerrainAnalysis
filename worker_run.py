@@ -7,6 +7,15 @@ from gdalconst import *
 
 # write output to file
 def write_to_file(data, x_size, y_size, output_file_name, input_driver_name):
+	"""Write analysed data to output file
+	
+	Keyword argument:
+	data 		  -- analysed data, 3 dimensional numpy array
+	x_size 		  -- size in x dimension for output raster band
+	y_size 		  -- size in y dimension for output raster band
+	output_file_name  -- file name for output data
+	input_driver_name -- output file format
+	"""
 	driver = gdal.GetDriverByName(input_driver_name)	
         output_dataset = driver.Create(output_file_name, x_size, y_size, 10, gdal.GDT_Float32)
         for i in range(data.shape[0]):
@@ -16,6 +25,13 @@ def write_to_file(data, x_size, y_size, output_file_name, input_driver_name):
 # this function assign roughly equally devided data to each process
 # then each process do the computation independently.
 def run_mpi_jobs (file, p, output):
+	""" Assign roughly equally divided data chunk to each process
+	
+	Keyword argument:
+	file   -- input file name
+	p      -- pixel size
+	output -- output file name
+	"""
 	comm = MPI.COMM_WORLD
 	rank = comm.Get_rank()
 	size = comm.Get_size()
