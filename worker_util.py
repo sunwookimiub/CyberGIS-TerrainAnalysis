@@ -71,8 +71,8 @@ def getE(data, p):
 def getF(data, p):
     """Return F, second derivative along diagonals.""" 
     bar = get_block(data)
-    return( (bar[2-off]+bar[6-off] \
-            - bar[0-off]-bar[8-off] ) \
+    return( (bar[2]+bar[6] \
+            - bar[0]-bar[8] ) \
             /(4*p*p) )
 
 def get_block(data):
