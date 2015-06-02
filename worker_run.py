@@ -23,7 +23,7 @@ def write_to_file(data, x_size, y_size,
                                    y_size, 10, gdal.GDT_Float32)
     for i in range(data.shape[0]):
         output_dataset.GetRasterBand(i+1).WriteArray(data[i], 1, 1)
-        output_dataset = None
+    output_dataset = None
 
 def run_mpi_jobs (file, p, output):
     """ Assign roughly equally divided data chunk to each process
@@ -77,5 +77,5 @@ def run_mpi_jobs (file, p, output):
     data = comm.gather(output_data, root=0)
     if rank == 0:
         # output processed data
-        data = np.concatenate(data, axis=2)
+        data = np.concatenate(data, axis=1)
         write_to_file(data, cols, rows, output, input_driver_name)
