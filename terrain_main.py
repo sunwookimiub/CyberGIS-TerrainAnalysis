@@ -22,6 +22,6 @@ def parseArguments():
     parser.add_argument("-l", help= "nodes=Number of Nodes:ppn=Number of ppn")
     return parser.parse_args()
 
-if __name__ == ("__main__") :
+if __name__ == "__main__" :
     args = parseArguments()
     run_mpi_jobs(args.inImg, args.p_, args.outImg_)
