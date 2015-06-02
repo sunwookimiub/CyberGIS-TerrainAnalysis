@@ -77,5 +77,5 @@ def run_mpi_jobs (file, p, output):
     data = comm.gather(output_data, root=0)
     if rank == 0:
         # output processed data
-        data = np.concatenate(data, axis=1)
+        data = np.concatenate(data, axis=2)
         write_to_file(data, cols, rows, output, input_driver_name)
