@@ -20,7 +20,7 @@ def process_bands(band, p, y_offset, x_size, y_size):
     # Set how RuntimeWarning: invalid value encountered in divide
     # error is handled. This error derives from division by Nan
     np.seterr(divide='ignore', invalid='ignore')
-    proc_data = band.ReadAsArray(0, x_offset, x_size, y_size)
+    proc_data = band.ReadAsArray(0, y_offset, x_size, y_size)
     output_data = np.zeros((10, y_size-2, x_size-2))
 
     # Implementation of Terrain Gradients Evans-Young method
