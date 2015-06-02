@@ -69,11 +69,11 @@ def run_mpi_jobs (file, p, output):
         y_size = proc_rows + 2
         output_data = process_bands(band, p, y_offset, x_size, y_size)
 
-        # wait for all processes finish processing
-        comm.Barrier()
-        # close input dataset
-        dataset = None
-        # rank 0 gathers all processed data
+    # wait for all processes finish processing
+    comm.Barrier()
+    # close input dataset
+    dataset = None
+    # rank 0 gathers all processed data
     data = comm.gather(output_data, root=0)
     if rank == 0:
         # output processed data
