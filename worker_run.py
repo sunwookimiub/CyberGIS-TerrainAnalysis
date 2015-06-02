@@ -74,7 +74,7 @@ def run_mpi_jobs (file, p, output):
         # close input dataset
         dataset = None
         # rank 0 gathers all processed data
-        data = comm.gather(output_data, root=0)
+    data = comm.gather(output_data, root=0)
     if rank == 0:
         # output processed data
         data = np.concatenate(data, axis=1)
