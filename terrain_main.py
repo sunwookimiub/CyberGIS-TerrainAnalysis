@@ -17,11 +17,11 @@ def parseArguments():
             '''))
 
     parser.add_argument("inImg", type=str, help="Name of the file need to be analysed")
-    parser.add_argument("outImg", type=str, help="Name of the output file. Default value: output_image.tif")
-    parser.add_argument("p", type=int, help="Pixel size. Default value: pixel size of the given input image")
+    parser.add_argument("outImg_", type=str, help="Name of the output file. Default value: output_image.tif")
+    parser.add_argument("p_", type=int, help="Pixel size. Default value: pixel size of the given input image")
     parser.add_argument("-l", help= "nodes=Number of Nodes:ppn=Number of ppn")
     return parser.parse_args()
 
 if __name__ == ("__main__") :
     args = parseArguments()
-    run_mpi_jobs(args.inImg, args.p, args.outImg)
+    run_mpi_jobs(args.inImg, args.p_, args.outImg_)
