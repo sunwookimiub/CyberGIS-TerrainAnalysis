@@ -4,7 +4,7 @@ import numpy as np
 from worker_util import *
 from mpi4py import MPI
 from gdalconst import *
-from test import *
+
 
 
 def write_to_file(data, x_size, y_size, 
@@ -24,7 +24,6 @@ def write_to_file(data, x_size, y_size,
     for i in range(data.shape[0]):
         output_dataset.GetRasterBand(i+1).WriteArray(data[i], 1, 1)
         output_dataset = None
-        read_and_plot(output_file_name)
 
 def run_mpi_jobs (file, p, output):
     """ Assign roughly equally divided data chunk to each process
