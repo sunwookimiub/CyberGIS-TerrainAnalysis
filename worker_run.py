@@ -41,14 +41,13 @@ def run_mpi_jobs (file, p, output):
     band = dataset.GetRasterBand(1)
     geotransform = dataset.GetGeoTransform()
     # if using default pixel size, get pixel size from data
-    if p == 0:
-        p = geotransform[1]
-        cols = dataset.RasterXSize
-        rows = dataset.RasterYSize
-        # roughly assign equal number of rows to each process
-        proc_rows = rows/size
-        # each process is assigned with same number of columns as original data
-        x_size = dataset.RasterXSize
+    p = geotransform[1]
+    cols = dataset.RasterXSize
+    rows = dataset.RasterYSize
+    # roughly assign equal number of rows to each process
+    proc_rows = rows/size
+    # each process is assigned with same number of columns as original data
+    x_size = dataset.RasterXSize
 
     # the process with highest rank get the last chunk of data
     if rank == size - 1:
